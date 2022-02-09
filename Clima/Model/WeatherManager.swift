@@ -14,17 +14,34 @@ protocol WeatherManagerDelegate {
 }
 
 struct WeatherManager {
-    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=083c3e4c372b5904efdfa57ce6cfd583&units=metric"
+    
+    
+        
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?"
     
     var delegate: WeatherManagerDelegate?
+        
+    func getUrlWithId() -> String {
+        
+        var keys: NSDictionary?
+        if let path = Bundle.main.path(forResource: "Keys", ofType: "plist") {
+                keys = NSDictionary(contentsOfFile: path)
+            }
+        var appid = ""
+        if let dict = keys {
+            appid = (dict["OpenWeatherAppId"] as? String)!
+            }
+        
+        return "\(weatherURL)appid=\(appid)&units=metric"
+    }
     
     func fetchWeather(cityName: String) {
-        let urlString = "\(weatherURL)&q=\(cityName)"
+        let urlString = "\(getUrlWithId())&q=\(cityName)"
         performRequest(with: urlString)
     }
     
     func fetchWeather(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
-        let urlString = "\(weatherURL)&lat=\(latitude)&lon=\(longitude)"
+        let urlString = "\(getUrlWithId())&lat=\(latitude)&lon=\(longitude)"
         performRequest(with: urlString)
     }
     
